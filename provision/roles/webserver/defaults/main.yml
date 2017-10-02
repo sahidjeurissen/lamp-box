@@ -1,0 +1,6 @@
+---
+document_root: /var/www/public
+
+ini_settings:
+  - { key: 'max_execution_time', value: 240 }
+  - { key: 'max_input_vars', value: 1500 }

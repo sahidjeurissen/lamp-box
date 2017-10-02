@@ -1,0 +1,39 @@
+---
+- name: install needed dependencies
+  apt: name={{ item }} state=latest
+  with_items:
+    - zip
+    - gzip
+    - unzip
+    - libgd2-xpm-dev
+    - imagemagick
+    - libmagickcore-dev
+    - libmagickwand-dev
+    - sendmail-bin
+    - sendmail
+    - beanstalkd
+
+- include: apache.yml
+- include: php7.yml
+- include: php5.6.yml
+
+- name: Set php.ini settings for php 7.0
+  ini_file:
+    dest: /etc/php/7.0/apache2/php.ini
+    section: custom
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+  with_items:
+    - "{{ ini_settings }}"
+  notify: reload apache
+
+
+- name: Set php.ini settings for php 5.6
+  ini_file:
+    dest: /etc/php/5.6/apache2/php.ini
+    section: custom
+    option: "{{ item.key }}"
+    value: "{{ item.value }}"
+  with_items:
+    - "{{ ini_settings }}"
+  notify: reload apache

@@ -1,0 +1,12 @@
+---
+- name: Install wp-cli
+  get_url:
+    url: https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+    dest: /usr/local/bin/wp
+    mode: a+x
+
+- name: Install pt-project script
+  template:
+    src=pt-project.py
+    dest=/usr/local/bin/pt-project
+    mode=a+x

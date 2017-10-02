@@ -1,0 +1,45 @@
+---
+- name: APT | Update cache
+  apt: update_cache=yes cache_valid_time=3600
+  changed_when: false
+
+- name: APT | Install sury dependencies
+  apt: name={{ item }} state=present
+  with_items:
+    - apt-transport-https
+    - ca-certificates
+    - lsb-release
+  when: ansible_distribution == "Debian"
+
+- name: APT_KEY | Install GPG key
+  apt_key: url='https://packages.sury.org/php/apt.gpg' state=present
+  when: ansible_distribution == "Debian"
+
+- name: APT_REPOSITORY | Add APT repository
+  apt_repository: repo='deb https://packages.sury.org/php {{ ansible_distribution_release }} main'
+  when: ansible_distribution == "Debian"
+
+
+- name: php - add repository for Ubuntu
+  apt_repository:
+    repo: "ppa:ondrej/php"
+    state: "present"
+    update_cache: yes
+  when: ansible_distribution == "Ubuntu"
+
+- name: install php5.6
+  apt: name={{ item }} state=latest
+  with_items:
+    - php5.6-common
+    - php5.6-mysql
+    - libapache2-mod-php5.6
+    - php5.6-cli
+    - php5.6-cgi
+    - php5.6-gd
+    - php5.6-mcrypt
+    - php5.6-mbstring
+    - php5.6-xml
+    - php5.6-zip
+    - php5.6-json
+    - php5.6-intl
+    - php5.6-curl

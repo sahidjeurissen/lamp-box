@@ -1,0 +1,10 @@
+---
+- name: Remove Default MOTD
+  file:
+    path=/etc/apache2/sites-enabled/000-default.conf
+    state=absent
+    
+- name: Set New MOTD
+  template:
+    src=motd.j2
+    dest=/etc/motd

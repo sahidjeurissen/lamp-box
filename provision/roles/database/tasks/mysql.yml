@@ -1,0 +1,34 @@
+---
+- name: add apt-key
+  command: apt-key adv --keyserver pgp.mit.edu --recv-keys 5072E1F5
+  become: yes
+
+- name: add repository
+  apt_repository:
+    repo: "deb http://repo.mysql.com/apt/{{ ansible_distribution | lower }}/ {{ ansible_distribution_release }} mysql-5.7"
+    state: present
+    update_cache: yes
+  become: yes
+
+- name: MySQL | Set debconf vars
+  action: raw sudo echo mysql-server mysql-server/root_password password {{ root_db_password }} | sudo /usr/bin/debconf-set-selections
+  tags: mysql
+
+- name: MySQL | Set debconf vars again
+  action: raw sudo echo mysql-server mysql-server/root_password_again password {{ root_db_password }} | sudo /usr/bin/debconf-set-selections
+  tags: mysql
+
+- name: Install required modules
+  apt: name={{ item }} state=present
+  with_items:
+    - python-mysqldb
+    - mysql-server
+    - mysql-client
+
+- name: update mysql root password for all root accounts
+  mysql_user: name=root host={{ item }} password={{ root_db_password }}
+  with_items:
+    - $ansible_hostname
+    - 127.0.0.1
+    - ::1
+    - localhost

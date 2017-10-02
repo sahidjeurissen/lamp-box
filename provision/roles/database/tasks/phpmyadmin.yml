@@ -1,0 +1,13 @@
+---
+- name: Install phpmyadmin
+  apt: name=phpmyadmin state=present
+
+- name: Ensure phpMyAdmin config file is included in Apache config.
+  lineinfile:
+    dest: /etc/apache2/apache2.conf
+    state: present
+    regexp: "^Include.+phpmyadmin.+$"
+    line: "Include /etc/phpmyadmin/apache.conf"
+    insertafter: "EOF"
+  notify:
+    - reload apache
